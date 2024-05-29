@@ -55,7 +55,7 @@ function ProjectComponent() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:2000/project')
+    axios.get('http://192.168.1.243:2000/project')
       .then(response => {
         setProjects(response.data)
         // setProjects(response.data.map(team => { return { label: team, code: team } }));
@@ -66,7 +66,7 @@ function ProjectComponent() {
   }, []);
 
   const getProjectEmployees = (obj) => {
-    axios.get(`http://localhost:2000/employees/project/${obj.project_id}`)
+    axios.get(`http://192.168.1.243:2000/employees/project/${obj.project_id}`)
       .then(response => {
         console.log(response.data)
         console.log(employees)
@@ -82,7 +82,7 @@ function ProjectComponent() {
     if (searchKey?.value) {
       // getProjectEmployees()()
       // getProjectEmployees(selectedProject)
-      setSelectedMonth(searchKey?.value?.getMonth())
+      setSelectedMonth(searchKey?.value?.getMonth()+1)
       setSelectedYear(searchKey?.value?.getFullYear())
       getProjectEmployees(selectedProject)
 

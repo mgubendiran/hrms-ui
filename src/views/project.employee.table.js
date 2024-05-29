@@ -46,7 +46,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://localhost:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
                 console.log(data)
                 let employeeLogData = data.data.map((obj, i) => {
@@ -131,7 +131,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     }, [projectId, year, month]);
 
     const getAttendanceLogByProject = (projectId, year, month) => {
-        axios.get(`http://localhost:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
                 console.log(data)
                 let employeeLogData = data.data.map((obj, i) => {
