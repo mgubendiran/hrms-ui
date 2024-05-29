@@ -108,7 +108,7 @@ function Upgrade() {
                     <td>
                       <Button
                         className="btn-round btn-fill"
-                        href="http://www.creative-tim.com/product/light-bootstrap-dashboard-pro-react/?ref=lbdrupgrade"
+                        href="https://www.sonata-software.com/product/light-bootstrap-dashboard-pro-react/?ref=lbdrupgrade"
                         target="_blank"
                         variant="info"
                       >

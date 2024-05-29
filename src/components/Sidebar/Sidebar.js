@@ -4,8 +4,8 @@
 * Sonata Encore - v2.0.1
 =========================================================
 
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Product Page: https://www.sonata-software.com/product/light-bootstrap-dashboard-react
+* Copyright 2022 Creative Tim (https://www.sonata-software.com)
 * Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
 
 * Coded by Creative Tim
@@ -38,11 +38,11 @@ function Sidebar({ color, image, routes }) {
       <div className="sidebar-wrapper">
         <div className="logo d-flex align-items-center justify-content-start">
           <a
-            href="https://www.creative-tim.com?ref=lbd-sidebar"
+            href="https://www.sonata-software.com?ref=lbd-sidebar"
             className="simple-text logo-mini mx-1"
           >
           </a>
-          <a className="simple-text" href="http://www.creative-tim.com">
+          <a className="simple-text" href="https://www.sonata-software.com">
             Sonata Encore Attendance
           </a>
         </div>

@@ -64,7 +64,6 @@ function MonthlyCalendar(props) {
                     }</Row>
                     {
                         logArr.map((ele, i) => {
-                            console.log('i : ', i)
                             return <Row>
                                 {
                                     DAYS.map(day => {
