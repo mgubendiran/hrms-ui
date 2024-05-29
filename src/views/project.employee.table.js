@@ -201,6 +201,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
 
     const attendanceTemplate = (employee) => {
         let count = employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half;
+        console.log('employee date data:', employee.UserName, employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half)
         let present = employee.attendance?.present + (employee.attendance?.half / 2)
         console.log(count, present)
         return <div>{employee?.complience?.count ? <ProgressBar value={Math.round((present / count) * 100)}></ProgressBar> : 'Remote'}</div>
@@ -348,7 +349,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Col md={3}>Complience</Col>
                                     <Col md={3}>{employee.complience?.present} / {employee.complience?.count} days</Col>
                                     <Col md={3}>Attendance</Col>
-                                    <Col md={3}>{employee.attendance?.present} / {employee.attendance?.present + employee.attendance?.absent} days</Col>
+                                    <Col md={3}>{employee.attendance?.present + (employee.attendance?.half) / 2} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
                                 </Row>
 <br></br>                                <Row>
                                     {/* <Col>{JSON.stringify(getCalenderData(employee))}</Col> */}
