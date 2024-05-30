@@ -66,7 +66,7 @@ function ProjectComponent() {
   }, []);
 
   const getProjectEmployees = (obj) => {
-    axios.get(`http://192.168.1.243:2000/employees/project/${obj.project_id}`)
+    axios.get(`http://192.168.1.243:2000/employee/project/${obj.project_id}`)
       .then(response => {
         console.log(response.data)
         console.log(employees)
