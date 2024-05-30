@@ -47,7 +47,7 @@ function MonthlyCalendar(props) {
         if (!logsByDate[DAYS[i]]) logsByDate[DAYS[i]] = []
         logsByDate[DAYS[i]].push({ day: DAYS[i], status: '', date: '' })
     }
-    let logArr = logsByDate['Sunday'] || []
+    let logArr = logsByDate['Monday'] || []
 
     return (
         <>

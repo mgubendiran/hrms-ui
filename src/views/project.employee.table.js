@@ -252,6 +252,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
             })}
         </>);
     }
+    let dm = new Date();
+    dm.setMonth(month-1);
 
     return (
 
@@ -338,12 +340,19 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                         <Card>
                             <Card.Body>
                                 <Row>
-                                    <Col md={3}>Scheduled</Col>
+                                    <Col md={3}>Scheduled Days</Col>
                                     <Col md={9}>{employee.schedule?.days?.join(', ')}</Col>
                                 </Row>
                                 <Row>
                                     <Col md={3}>Comments</Col>
                                     <Col md={9}>{employee.schedule?.Comments}</Col>
+                                </Row>
+                                <Row>
+                                    <Col md={3}>Month</Col>
+                                    <Col md={3}>{ 
+                                    dm.toLocaleString('default', { month: 'long' })}</Col>
+                                    <Col md={3}>Year</Col>
+                                    <Col md={3}>{year}</Col>
                                 </Row>
                                 <Row>
                                     <Col md={3}>Complience</Col>
