@@ -25,6 +25,7 @@ import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 
 import ProjectComponent from "views/project.component";
+import EmployeeComponent from "views/employee.component";
 
 const dashboardRoutes = [
   // {
@@ -40,6 +41,13 @@ const dashboardRoutes = [
     name: "Project",
     icon: "nc-icon nc-chart-pie-35",
     component: ProjectComponent,
+    layout: "/admin"
+  },
+  {
+    path: "/employee",
+    name: "Employee",
+    icon: "nc-icon nc-chart-pie-35",
+    component: EmployeeComponent,
     layout: "/admin"
   },
   // {
