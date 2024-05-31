@@ -165,7 +165,7 @@ function EmployeeComponent() {
                           <Col>{selectedEmployee?.WorkLocation}</Col>
                         </Row>
                         <Row>
-                          <Col md="4">Client</Col>
+                          <Col md="4">Scheduled Days</Col>
                           <Col>{selectedEmployee?.schedule ? getCommitedDays(selectedEmployee?.schedule).join(', ') : '-'}</Col>
                         </Row>
                       </Card.Body>
