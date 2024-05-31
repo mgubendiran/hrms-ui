@@ -350,7 +350,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 <Row>
                                     <Col md={3}>Month</Col>
                                     <Col md={3}>{ 
-                                    dm.toLocaleString('default', { month: 'long' })}</Col>
+                                    new Date(year, month-1).toLocaleString('default', { month: 'long' })}</Col>
                                     <Col md={3}>Year</Col>
                                     <Col md={3}>{year}</Col>
                                 </Row>
