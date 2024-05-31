@@ -96,7 +96,7 @@ function ProjectComponent() {
           <Col lg="6" sm="6">
             <Card style={{height: "320px"}} >
               <Card.Header>
-                <Card.Title as="h4">Project-Wise Report</Card.Title>
+                <Card.Title as="h4">Project-wise Report</Card.Title>
               </Card.Header>
               <Card.Body>
                 <Row><Col><h5>Project</h5></Col></Row>

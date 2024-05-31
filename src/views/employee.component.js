@@ -122,24 +122,25 @@ function EmployeeComponent() {
               </Card.Body>
             </Card>
           </Col>
-          <Col lg="6" sm="6">
+         { selectedEmployee ?  <Col lg="6" sm="6">
             <Card style={{ height: "320px" }}>
               <Card.Header>
-                <Card.Title as="h4">Employee</Card.Title>
+                <Card.Title as="h4">Report</Card.Title>
               </Card.Header>
               <Card.Body>
-                <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
+                
+                {/* <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
                   console.log(e.value)
                   if (e.value) {
                     setSelectedEmployee(e?.value)
                   }
-                }} options={employees} optionLabel="FullName" className="w-full md:w-14rem" />
+                }} options={employees} optionLabel="FullName" className="w-full md:w-14rem" /> */}
 
               </Card.Body>
             </Card>
-          </Col>
+          </Col> : null}
         </Row>
-        <Row>
+        {selectedEmployee ? <Row>
           <Col>
             <Card style={{ height: "80px" }}>
               <Card.Header>
@@ -160,7 +161,7 @@ function EmployeeComponent() {
                           <Col>{selectedEmployee?.Number}</Col>
                         </Row>
                         <Row>
-                          <Col md="4">Name</Col>
+                          <Col md="4">Location</Col>
                           <Col>{selectedEmployee?.WorkLocation}</Col>
                         </Row>
                         <Row>
@@ -216,10 +217,7 @@ function EmployeeComponent() {
               </Card.Header>
             </Card>
           </Col>
-        </Row>
-        <Row>
-          {/* {selectedProject && selectedYear && selectedMonth ? <ProjectEmployeeTable projectId={selectedProject.project_id} month={selectedMonth} year={selectedYear}></ProjectEmployeeTable> : null} */}
-        </Row>
+        </Row> : null}
       </Container>
     </>
   );
