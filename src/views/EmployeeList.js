@@ -58,8 +58,8 @@ function EmployeeList(props) {
                       <th className="border-0">RM</th>
                       <th className="border-0">Compliance</th>
                       <th className="border-0">Attendance</th>
-                      <th className="border-0">Presents</th>
-                      <th className="border-0">Absents</th>
+                      <th className="border-0">Present</th>
+                      <th className="border-0">Absent</th>
                       <th className="border-0">Entries</th>
                     </tr>
                   </thead>

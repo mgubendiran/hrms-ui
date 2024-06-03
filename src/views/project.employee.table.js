@@ -327,7 +327,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Column field="number" header="Number" style={{ width: '10%' }}></Column>
                                     <Column field="name" header="Name" style={{ width: '20%' }}></Column>
                                     <Column field="location" header="Location" style={{ width: '20%' }}></Column>
-                                    <Column field="complience" body={complienceTemplate} header="complience" style={{ width: '20%' }}></Column>
+                                    <Column field="compliance" body={complienceTemplate} header="complience" style={{ width: '20%' }}></Column>
                                     <Column body={attendanceTemplate} header="Attendance" style={{ width: '20%' }}></Column>
                                     <Column body={employeeLogTemplate} header="Entries" style={{ width: '5%' }}></Column>
                                 </DataTable>

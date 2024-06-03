@@ -68,17 +68,21 @@ function MonthlyCalendar(props) {
                                 {
                                     DAYS.map(day => {
                                         let val = logsByDate?.[day]?.[i]?.status;
-                                        return <Col style={{ border: "grey solid 1px" }} >
+                                        let bg = val == 'A' ? 'red' : val?.indexOf('P')>-1 ? 'green' : null;
+                                        return <Col style={{ border: "grey solid 1px", backgroundColor: bg }} >
                                             {/* {logsByDate?.[day]?.[i]?.status} -{logsByDate?.[day]?.[i]?.date} */}
                                             <><div style={{
                                                 textAlign: "left",
                                                 fontSize: "10px",
-                                                marginLeft: "-10px"
+                                                marginLeft: "-10px",
+                                                color: "black"
                                             }}>{logsByDate?.[day]?.[i]?.date}</div>
-                                                <div className={val == 'A' ? 'text-danger' : ''} style={{
+                                            {/* //bg == "green" */}
+                                                <div style={{
                                                     textAlign: "right",
                                                     marginRight: "-10px",
-                                                    color: val == 'A' ? '#ff3d32' : val == 'P' ? '#06b6d4' : '#ec4899'
+                                                    color: bg == "red" || bg == "green" ? "black" : '#ec4899'
+                                                    // color: val == 'A' ? '#ff3d32' : val == 'P' ? '#06b6d4' : '#ec4899'
                                                 }}>{val}</div></>
                                         </Col>
                                     }

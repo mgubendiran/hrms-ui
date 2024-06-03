@@ -57,7 +57,12 @@ function ProjectComponent() {
   useEffect(() => {
     axios.get('http://192.168.1.243:2000/project')
       .then(response => {
-        setProjects(response.data)
+        setProjects(response.data?.map(p => {
+          return {
+            ...p,
+            name: `${p?.project_code} - ${p?.project_name}`
+          }
+        }))
         // setProjects(response.data.map(team => { return { label: team, code: team } }));
       })
       .catch(error => {
@@ -110,7 +115,7 @@ function ProjectComponent() {
                     }
                   }} 
                   // onChange={(e) => dateHandler(e)}
-                  options={projects} optionLabel="project_name" className="w-full md:w-14rem" /></Col>
+                  options={projects} optionLabel="name" className="w-full md:w-14rem" /></Col>
                 </Row>
                 <Row><Col><h5>Month</h5></Col></Row>
                 <Row>
