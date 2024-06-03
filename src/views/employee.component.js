@@ -129,8 +129,8 @@ function EmployeeComponent() {
         Math.round((apc / ac) * 100),
         Math.round((aac / ac) * 100)
       ],
-      present: present + (half / 2),
-      absent: absent + (half / 2)
+      present: apc,
+      absent: aac
     })
   }
 
