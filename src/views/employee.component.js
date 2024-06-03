@@ -8,6 +8,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import ChartistGraph from "react-chartist";
 
 import axios from 'axios'
 import { Dropdown } from 'primereact/dropdown';
@@ -33,6 +34,13 @@ const monthList = [
   { key: 12, value: "12-December" },
 
 ]
+
+const remoteInfoStyle = {
+  padding: '20px',
+  color: 'blue',
+  fontSize: '20px'
+}
+
 function EmployeeComponent() {
   const [employees, setEmployees] = useState([])
   const [years, setYears] = useState([{ key: 2024, value: 2024 }, { key: 2023, value: 2023 }])
@@ -41,6 +49,11 @@ function EmployeeComponent() {
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [selectedEmployee, setSelectedEmployee] = useState(null)
   const [date, setDate] = useState(null)
+  const [attendanceData, setAttendanceData] = useState(null)
+  const [complianceData, setComplianceData] = useState(null)
+  const [logs, setLogs] = useState([])
+  const [isRemote, setIsRemote] = useState(true)
+
 
 
   useEffect(() => {
@@ -60,14 +73,72 @@ function EmployeeComponent() {
   };
 
   // valueTemplate={employeeNameTemplate} itemTemplate={employeeNameTemplate}
+  const updateData = (selectedDate) => {
+    let logs = selectedEmployee?.attendance_logs || []
+    let currentMonthLog = logs.filter(log => {
+      let d = new Date(log.AttendanceDate)
+      // console.log(d?.getMonth(), date?.getMonth(), d?.getFullYear(), date?.getFullYear())
+      return selectedDate && d.getMonth() == selectedDate.getMonth() && d.getFullYear() == selectedDate.getFullYear()
+    })
+    setLogs(currentMonthLog)
+
+    let commitedDays = getCommitedDays(selectedEmployee?.schedule);
+    console.log(commitedDays)
+    if (commitedDays.length > 0) setIsRemote(false)
+    let present = currentMonthLog.filter((obj) => obj.StatusCode == "P");
+    let half = currentMonthLog.filter((obj) => obj.StatusCode == "½P");
+    let absent = currentMonthLog.filter((obj) => obj.StatusCode == "A")
+    console.log(present, absent, half)
+    let apc = present.length + (half.length / 2);
+    let aac = absent.length + (half.length / 2)
+    let ac = present.length + absent.length + half.length;
+    let cPresent = [...present, ...half].filter(obj => {
+      let d = new Date(obj.AttendanceDate).getDay();
+      return commitedDays.indexOf(DAYS[d]) > -1
+    })
+    let cAbsent = absent.filter(obj => {
+      let d = new Date(obj.AttendanceDate).getDay();
+      return commitedDays.indexOf(DAYS[d]) > -1
+    })
+    let cpc = cPresent.length;
+    let cac = cAbsent.length
+    let cc = cpc + cac;
+    console.log("currentMonthLog: ", currentMonthLog)
+    console.log("compliance : ", cpc, cac, cc)
+    console.log("attendance : ", apc, aac, ac)
+
+    setComplianceData({
+      labels: [
+        Math.round((cpc / cc) * 100) + "%",
+        Math.round((cac / cc) * 100) + "%"
+      ],
+      series: [
+        Math.round((cpc / cc) * 100),
+        Math.round((cac / cc) * 100)
+      ],
+      present: cpc,
+      absent: cac
+    })
+
+    setAttendanceData({
+      labels: [
+        Math.round((apc / ac) * 100) + "%",
+        Math.round((aac / ac) * 100) + "%"
+      ],
+      series: [
+        Math.round((apc / ac) * 100),
+        Math.round((aac / ac) * 100)
+      ],
+      present: present + (half / 2),
+      absent: absent + (half / 2)
+    })
+  }
 
   const getEmployeeDetails = (obj) => {
     axios.get(`http://192.168.1.243:2000/employee/${obj.EmployeeId}/dashboard`)
       .then(response => {
-        console.log(response.data)
-        // console.log(employee)
-        // let employeeData = (response.data?.employees || []).map(obj => {return {...obj, FullName: `${obj.FirstName} ${obj.LastName} - ${obj.Number}`}})
-        setSelectedEmployee(response.data)
+        setSelectedEmployee(response.data);
+        updateData();
       })
       .catch(error => {
         console.error(error);
@@ -76,20 +147,22 @@ function EmployeeComponent() {
 
   const dateHandler = (searchKey) => {
     if (searchKey?.value) {
-      setSelectedMonth(searchKey?.value?.getMonth() + 1)
-      setSelectedYear(searchKey?.value?.getFullYear())
-      getEmployeeDetails(selectedEmployee)
+      setDate(searchKey?.value);
+      updateData(searchKey?.value)
+      // setSelectedMonth(searchKey?.value?.getMonth() + 1)
+      // setSelectedYear(searchKey?.value?.getFullYear())
+      //  getEmployeeDetails(selectedEmployee)
     }
   }
   const getCommitedDays = (schedule) => {
     return DAYS.filter(day => schedule?.[day] == '1');
-}
+  }
 
   return (
     <>
       <Container fluid>
         <Row>
-          <Col lg="6" sm="6">
+          <Col lg="5" sm="5">
             <Card style={{ height: "320px" }} >
               <Card.Header>
                 <Card.Title as="h4">Employee-wise Report</Card.Title>
@@ -122,13 +195,57 @@ function EmployeeComponent() {
               </Card.Body>
             </Card>
           </Col>
-         { selectedEmployee ?  <Col lg="6" sm="6">
+          {selectedEmployee && date ? <Col lg="5" sm="5">
             <Card style={{ height: "320px" }}>
               <Card.Header>
-                <Card.Title as="h4">Report</Card.Title>
+                <Card.Title as="h4">Report {date ? '- '+date?.toLocaleString('default', { month: 'long' }) : null}</Card.Title>
               </Card.Header>
               <Card.Body>
-                
+                <Row  style={{"maxHeight": "300px !important"}}>
+                <Col >
+                    {
+                      isRemote? <div style={remoteInfoStyle}>Working as Remote</div> : 
+                      <Card >
+                        <Card.Header>Compliance</Card.Header>
+                        <Card.Body>
+                        <ChartistGraph
+                        data={complianceData}
+                        type="Pie"
+                      />
+                      <div className="legend">
+                        <Row >
+                          <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complianceData?.present} days</Col>
+                          <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complianceData?.absent} days</Col>
+                        </Row>
+                      </div>
+                        </Card.Body>
+                      </Card>                      
+                    }
+                  </Col>
+
+                  <Col >
+                    {
+                      isRemote? <div style={remoteInfoStyle}>Working as Remote</div> : 
+                      <Card>
+                        <Card.Header>Attendance</Card.Header>
+                        <Card.Body>
+                        <ChartistGraph
+                        data={attendanceData}
+                        type="Pie"
+                      />
+                      <div className="legend">
+                        <Row >
+                          <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData?.present} days</Col>
+                          <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {attendanceData?.absent} days</Col>
+                        </Row>
+                      </div>
+                        </Card.Body>
+                      </Card>                      
+                    }
+                  </Col>
+                    
+                </Row>
+
                 {/* <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
                   console.log(e.value)
                   if (e.value) {
@@ -149,11 +266,11 @@ function EmployeeComponent() {
                 </hr>
                 {/* <p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p> */}
                 <Row>
-                  
+
                   <Col md="4">
-                    <Card style={{minHeight: "200px"}}>
+                    <Card style={{ minHeight: "200px" }}>
                       <Card.Header>
-                      <Card.Title as="h4">Employee Details</Card.Title>
+                        <Card.Title as="h4">Employee Details</Card.Title>
                       </Card.Header>
                       <Card.Body>
                         <Row>
@@ -172,9 +289,9 @@ function EmployeeComponent() {
                     </Card>
                   </Col>
                   <Col md="4">
-                    <Card style={{minHeight: "200px"}}>
+                    <Card style={{ minHeight: "200px" }}>
                       <Card.Header>
-                      <Card.Title as="h4">Reporting Manager</Card.Title>
+                        <Card.Title as="h4">Reporting Manager</Card.Title>
                       </Card.Header>
                       <Card.Body>
                         <Row>
@@ -193,9 +310,9 @@ function EmployeeComponent() {
                     </Card>
                   </Col>
                   <Col md="4">
-                    <Card style={{minHeight: "200px"}}>
+                    <Card style={{ minHeight: "200px" }}>
                       <Card.Header>
-                      <Card.Title as="h4">Project Details</Card.Title>
+                        <Card.Title as="h4">Project Details</Card.Title>
                       </Card.Header>
                       <Card.Body>
                         <Row>

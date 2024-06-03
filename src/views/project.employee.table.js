@@ -25,7 +25,9 @@ const remoteInfoStyle = {
     fontSize: '20px'
 }
 let DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
+const getCommitedDays = (schedule) => {
+    return DAYS.filter(day => schedule?.[day] == '1');
+}
 const lastDayOfMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
 }
