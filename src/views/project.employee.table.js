@@ -355,7 +355,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Col md={3}>{year}</Col>
                                 </Row>
                                 <Row>
-                                    <Col md={3}>Complience</Col>
+                                    <Col md={3}>Compliance</Col>
                                     <Col md={3}>{employee.complience?.present} / {employee.complience?.count} days</Col>
                                     <Col md={3}>Attendance</Col>
                                     <Col md={3}>{employee.attendance?.present + (employee.attendance?.half) / 2} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
