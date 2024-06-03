@@ -93,7 +93,20 @@ function ProjectComponent() {
 
     }
   }
+  const exportHandler = (searchKey) => {
+    axios.get(`http://192.168.1.243:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
+      .then((data) => {
+        // console.log(data)
+        const url = window.URL.createObjectURL(new Blob([data.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${Date.now()}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+      });
+  }
 
+  
   return (
     <>
       <Container fluid>
@@ -176,7 +189,12 @@ function ProjectComponent() {
           <Card style={{height: "80px"}}>
                             <Card.Header>
                                 <Card.Title as="h4" className="">Project: {selectedProject?.project_name}</Card.Title>
-                                <p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p>
+                                <Row>
+                                  <Col md="10"><p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p></Col>
+                                  <Col md="2">{selectedProject && selectedYear && selectedMonth ? <Button onClick={exportHandler}>Export</Button>: null}</Col>
+                                </Row>
+                                 
+                                
                             </Card.Header>
                         </Card>
           </Col>
