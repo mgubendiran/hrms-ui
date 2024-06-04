@@ -170,7 +170,7 @@ function ProjectComponent() {
           <Col lg="6" sm="6">
             <Card style={{height: "320px"}}>
               <Card.Header>
-                <Card.Title as="h4">Employee</Card.Title>
+                <Card.Title as="h4">Employees</Card.Title>
               </Card.Header>
               <Card.Body>
                 <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
