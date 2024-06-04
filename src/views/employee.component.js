@@ -169,20 +169,23 @@ function EmployeeComponent() {
               </Card.Header>
               <Card.Body>
                 <Row>
-                  <Col md="2">Employee</Col>
-                  <Col md="4"><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
+                  {/* <Col md="1">Employee</Col> */}
+                  <Col md="8"><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
                     onChange={(e) => {
                       console.log(e.value)
                       if (e.value) {
                         setSelectedEmployee(e?.value)
                         getEmployeeDetails(e?.value)
+                        if(date) {
+                          updateData(date)
+                        }
                       }
                     }}
                     options={employees}
                     optionLabel="FullName"
                     className="w-full md:w-14rem" /></Col>
-                  <Col>Month</Col>
-                  <Col><Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
+                  {/* <Col md = "1">Month</Col> */}
+                  <Col md = "4"><Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
                     onChange={(e) => dateHandler(e)}
                     view="month" dateFormat="mm/yy" /></Col>
                 </Row>
@@ -320,14 +323,6 @@ function EmployeeComponent() {
                   </Col>
 
                 </Row>
-
-                {/* <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
-                  console.log(e.value)
-                  if (e.value) {
-                    setSelectedEmployee(e?.value)
-                  }
-                }} options={employees} optionLabel="FullName" className="w-full md:w-14rem" /> */}
-
               </Card.Body>
             </Card>
           </Col>
