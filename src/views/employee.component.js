@@ -161,16 +161,16 @@ function EmployeeComponent() {
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col lg="5" sm="5">
-            <Card style={{ height: "320px" }} >
+        <Row md="12">
+          <Col>
+            <Card >
               <Card.Header>
                 <Card.Title as="h4">Employee-wise Report</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Row><Col><h5>Employees</h5></Col></Row>
                 <Row>
-                  <Col><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
+                  <Col md="2">Employee</Col>
+                  <Col md="4"><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
                     onChange={(e) => {
                       console.log(e.value)
                       if (e.value) {
@@ -178,72 +178,147 @@ function EmployeeComponent() {
                         getEmployeeDetails(e?.value)
                       }
                     }}
-                    // onChange={(e) => dateHandler(e)}
-                    // itemTemplate={employeeNameTemplate}
                     options={employees}
                     optionLabel="FullName"
-
                     className="w-full md:w-14rem" /></Col>
-                </Row>
-                <Row><Col><h5>Month</h5></Col></Row>
-                <Row>
-                  <Col>
-                    <Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
-                      onChange={(e) => dateHandler(e)}
-                      view="month" dateFormat="mm/yy" /></Col>
+                  <Col>Month</Col>
+                  <Col><Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
+                    onChange={(e) => dateHandler(e)}
+                    view="month" dateFormat="mm/yy" /></Col>
                 </Row>
               </Card.Body>
             </Card>
           </Col>
-          {selectedEmployee && date ? <Col lg="5" sm="5">
-            <Card style={{ height: "320px" }}>
+        </Row>
+          {selectedEmployee ? <Row>
+            <Col>
+              <Card >
+                <Card.Header>
+                  <Card.Title as="h4" className="">Employee: {selectedEmployee?.FirstName} {selectedEmployee?.LastName}</Card.Title>
+                  <hr>
+                  </hr>
+                  {/* <p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p> */}
+                  <Row>
+
+                    <Col md="4">
+                      <Card style={{ minHeight: "200px" }}>
+                        <Card.Header>
+                          <Card.Title as="h4">Employee Details</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                          <Row>
+                            <Col md="4">EmpID</Col>
+                            <Col>{selectedEmployee?.Number}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Location</Col>
+                            <Col>{selectedEmployee?.WorkLocation}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Scheduled Days</Col>
+                            <Col>{selectedEmployee?.schedule ? getCommitedDays(selectedEmployee?.schedule).join(', ') : '-'}</Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                    <Col md="4">
+                      <Card style={{ minHeight: "200px" }}>
+                        <Card.Header>
+                          <Card.Title as="h4">Reporting Manager</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                          <Row>
+                            <Col md="4">EmpID</Col>
+                            <Col>{selectedEmployee?.manager?.Number || '-'}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Name</Col>
+                            <Col>{selectedEmployee?.manager?.FirstName || ''} {selectedEmployee?.manager?.LastName || "-"}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Location</Col>
+                            <Col>{selectedEmployee?.manager?.WorkLocation || '-'}</Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                    <Col md="4">
+                      <Card style={{ minHeight: "200px" }}>
+                        <Card.Header>
+                          <Card.Title as="h4">Project Details</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                          <Row>
+                            <Col md="4">Code</Col>
+                            <Col>{selectedEmployee?.project?.project_code || '-'}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Name</Col>
+                            <Col>{selectedEmployee?.project?.project_name || '-'}</Col>
+                          </Row>
+                          <Row>
+                            <Col md="4">Client</Col>
+                            <Col>{selectedEmployee?.project?.client_name || '-'}</Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  </Row>
+                </Card.Header>
+              </Card>
+            </Col>
+          </Row> : null}
+          {selectedEmployee && date ? 
+          <Row>
+            <Col lg="12" sm="12">
+            <Card >
               <Card.Header>
-                <Card.Title as="h4">Report {date ? '- '+date?.toLocaleString('default', { month: 'long' }) : null}</Card.Title>
+                <Card.Title as="h4">Report {date ? '- ' + date?.toLocaleString('default', { month: 'long' }) : null}</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Row  style={{"maxHeight": "300px !important"}}>
-                <Col >
+                <Row style={{ "maxHeight": "300px !important" }}>
+                  <Col >
                     {
-                      isRemote? <div style={remoteInfoStyle}>Working as Remote</div> : 
-                      <Card >
-                        <Card.Header>Compliance</Card.Header>
-                        <Card.Body>
-                        <ChartistGraph
-                        data={complianceData}
-                        type="Pie"
-                      />
-                      <div className="legend">
-                        <Row >
-                          <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complianceData?.present} days</Col>
-                          <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complianceData?.absent} days</Col>
-                        </Row>
-                      </div>
-                        </Card.Body>
-                      </Card>                      
+                      isRemote ? <div style={remoteInfoStyle}>Working as Remote</div> :
+                        <Card >
+                          <Card.Header>Compliance</Card.Header>
+                          <Card.Body>
+                            <ChartistGraph
+                              data={complianceData}
+                              type="Pie"
+                            />
+                            <div className="legend">
+                              <Row >
+                                <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complianceData?.present} days</Col>
+                                <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complianceData?.absent} days</Col>
+                              </Row>
+                            </div>
+                          </Card.Body>
+                        </Card>
                     }
                   </Col>
 
                   <Col >
                     {
-                      isRemote? <div style={remoteInfoStyle}>Working as Remote</div> : 
-                      <Card>
-                        <Card.Header>Attendance</Card.Header>
-                        <Card.Body>
-                        <ChartistGraph
-                        data={attendanceData}
-                        type="Pie"
-                      />
-                      <div className="legend">
-                        <Row >
-                          <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData?.present} days</Col>
-                          <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {attendanceData?.absent} days</Col>
-                        </Row>
-                      </div>
-                        </Card.Body>
-                      </Card>                      
+                      isRemote ? <div style={remoteInfoStyle}>Working as Remote</div> :
+                        <Card>
+                          <Card.Header>Attendance</Card.Header>
+                          <Card.Body>
+                            <ChartistGraph
+                              data={attendanceData}
+                              type="Pie"
+                            />
+                            <div className="legend">
+                              <Row >
+                                <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData?.present} days</Col>
+                                <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {attendanceData?.absent} days</Col>
+                              </Row>
+                            </div>
+                          </Card.Body>
+                        </Card>
                     }
                   </Col>
-                    
+
                 </Row>
 
                 {/* <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
@@ -255,86 +330,8 @@ function EmployeeComponent() {
 
               </Card.Body>
             </Card>
-          </Col> : null}
-        </Row>
-        {selectedEmployee ? <Row>
-          <Col>
-            <Card style={{ height: "80px" }}>
-              <Card.Header>
-                <Card.Title as="h4" className="">Employee: {selectedEmployee?.FirstName} {selectedEmployee?.LastName}</Card.Title>
-                <hr>
-                </hr>
-                {/* <p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p> */}
-                <Row>
-
-                  <Col md="4">
-                    <Card style={{ minHeight: "200px" }}>
-                      <Card.Header>
-                        <Card.Title as="h4">Employee Details</Card.Title>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row>
-                          <Col md="4">EmpID</Col>
-                          <Col>{selectedEmployee?.Number}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Location</Col>
-                          <Col>{selectedEmployee?.WorkLocation}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Scheduled Days</Col>
-                          <Col>{selectedEmployee?.schedule ? getCommitedDays(selectedEmployee?.schedule).join(', ') : '-'}</Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md="4">
-                    <Card style={{ minHeight: "200px" }}>
-                      <Card.Header>
-                        <Card.Title as="h4">Reporting Manager</Card.Title>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row>
-                          <Col md="4">EmpID</Col>
-                          <Col>{selectedEmployee?.manager?.Number || '-'}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Name</Col>
-                          <Col>{selectedEmployee?.manager?.FirstName || ''} {selectedEmployee?.manager?.LastName || "-"}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Location</Col>
-                          <Col>{selectedEmployee?.manager?.WorkLocation || '-'}</Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md="4">
-                    <Card style={{ minHeight: "200px" }}>
-                      <Card.Header>
-                        <Card.Title as="h4">Project Details</Card.Title>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row>
-                          <Col md="4">Code</Col>
-                          <Col>{selectedEmployee?.project?.project_code || '-'}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Name</Col>
-                          <Col>{selectedEmployee?.project?.project_name || '-'}</Col>
-                        </Row>
-                        <Row>
-                          <Col md="4">Client</Col>
-                          <Col>{selectedEmployee?.project?.client_name || '-'}</Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>
-              </Card.Header>
-            </Card>
           </Col>
-        </Row> : null}
+          </Row> : null}
       </Container>
     </>
   );
