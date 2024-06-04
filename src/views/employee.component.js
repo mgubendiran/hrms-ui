@@ -168,7 +168,7 @@ function EmployeeComponent() {
                 <Card.Title as="h4">Employee-wise Report</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Row><Col><h5>Employee</h5></Col></Row>
+                <Row><Col><h5>Employees</h5></Col></Row>
                 <Row>
                   <Col><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
                     onChange={(e) => {

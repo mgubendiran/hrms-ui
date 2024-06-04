@@ -19,15 +19,15 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import Dashboard from './Dashboard copy';
 import MonthlyCalendar from './monthly.calender';
 
+import "./../assets/css/custom.css"
+
 const remoteInfoStyle = {
     padding: '20px',
     color: 'blue',
     fontSize: '20px'
 }
 let DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const getCommitedDays = (schedule) => {
-    return DAYS.filter(day => schedule?.[day] == '1');
-}
+
 const lastDayOfMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
 }
@@ -329,7 +329,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Column field="number" header="Number" style={{ width: '10%' }}></Column>
                                     <Column field="name" header="Name" style={{ width: '20%' }}></Column>
                                     <Column field="location" header="Location" style={{ width: '20%' }}></Column>
-                                    <Column field="compliance" body={complienceTemplate} header="complience" style={{ width: '20%' }}></Column>
+                                    <Column field="complience" body={complienceTemplate} header="compliance" style={{ width: '20%' }}></Column>
                                     <Column body={attendanceTemplate} header="Attendance" style={{ width: '20%' }}></Column>
                                     <Column body={employeeLogTemplate} header="Entries" style={{ width: '5%' }}></Column>
                                 </DataTable>
