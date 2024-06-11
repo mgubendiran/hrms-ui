@@ -55,12 +55,13 @@ function ProjectComponent() {
 
 
   useEffect(() => {
-    axios.get('http://192.168.1.243:2000/project')
+    axios.get('http://192.168.1.243:2000/client')
       .then(response => {
         setProjects(response.data?.map(p => {
           return {
             ...p,
-            name: `${p?.project_code} - ${p?.project_name}`
+            // name: `${p?.project_code} - ${p?.project_name}`
+            name: p.client_name
           }
         }))
         // setProjects(response.data.map(team => { return { label: team, code: team } }));
@@ -71,7 +72,7 @@ function ProjectComponent() {
   }, []);
 
   const getProjectEmployees = (obj) => {
-    axios.get(`http://192.168.1.243:2000/employee/project/${obj.project_id}`)
+    axios.get(`http://192.168.1.243:2000/employee/client/${obj.client_name}`)
       .then(response => {
         console.log(response.data)
         console.log(employees)
@@ -188,9 +189,10 @@ function ProjectComponent() {
           <Col>
           <Card style={{height: "80px"}}>
                             <Card.Header>
-                                <Card.Title as="h4" className="">Project: {selectedProject?.project_name}</Card.Title>
+                                <Card.Title as="h4" className="">Project: {selectedProject?.client_name}</Card.Title>
                                 <Row>
-                                  <Col md="10"><p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p></Col>
+                                <Col md="10"><p className="card-category">{selectedProject?.projects?.map(p => p.project_name)?.join(' ,')}</p></Col>
+                                  {/* <Col md="10"><p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p></Col> */}
                                   <Col md="2">{selectedProject && selectedYear && selectedMonth ? <Button onClick={exportHandler}>Export</Button>: null}</Col>
                                 </Row>
                                  
@@ -200,7 +202,7 @@ function ProjectComponent() {
           </Col>
         </Row>
         <Row>
-          {selectedProject && selectedYear && selectedMonth ? <ProjectEmployeeTable projectId={selectedProject.project_id} month={selectedMonth} year={selectedYear}></ProjectEmployeeTable>: null}
+          {selectedProject && selectedYear && selectedMonth ? <ProjectEmployeeTable projectId={selectedProject.name} month={selectedMonth} year={selectedYear} client={selectedProject}></ProjectEmployeeTable>: null}
         </Row>
       </Container>
     </>

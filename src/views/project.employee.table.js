@@ -48,7 +48,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://192.168.1.243:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
                 console.log(data)
                 let employeeLogData = data.data.map((obj, i) => {
@@ -81,7 +81,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                         }),
                         firstDay: firstDayOfMonth(new Date(obj?.logs?.[0]?.['AttendanceDate'])),
                         lastDay: lastDayOfMonth(new Date(obj?.logs?.[0]?.['AttendanceDate'])),
-                        lastDay: lastDateOfMonth(new Date(obj?.logs?.[0]?.['AttendanceDate']))
+                        lastDay: lastDateOfMonth(new Date(obj?.logs?.[0]?.['AttendanceDate'])),
+                        project: obj?.project?.project_name
                     }
                 })
                 console.log("data: ", employeeLogData)
@@ -327,8 +328,9 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 <DataTable stripedRows value={employees} paginator rows={10} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
                                     <Column field="sno" header="S.no" style={{ width: '5%' }}></Column>
                                     <Column field="number" header="Number" style={{ width: '10%' }}></Column>
-                                    <Column field="name" header="Name" style={{ width: '20%' }}></Column>
-                                    <Column field="location" header="Location" style={{ width: '20%' }}></Column>
+                                    <Column field="name" header="Name" style={{ width: '15%' }}></Column>
+                                    <Column field="project" header="Project" style={{ width: '15%' }}></Column>
+                                    <Column field="location" header="Location" style={{ width: '10%' }}></Column>
                                     <Column field="complience" body={complienceTemplate} header="compliance" style={{ width: '20%' }}></Column>
                                     <Column body={attendanceTemplate} header="Attendance" style={{ width: '20%' }}></Column>
                                     <Column body={employeeLogTemplate} header="Entries" style={{ width: '5%' }}></Column>
