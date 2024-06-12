@@ -47,7 +47,7 @@ function Dashboard() {
 
 
   useEffect(() => {
-    axios.get('http://192.168.1.243:5000/api/dashboard')
+    axios.get('http://localhost:5000/api/dashboard')
       .then(response => {
         console.log(response.data)
         setProjects(response.data.teams.map(team => { return { label: team, code: team } }));

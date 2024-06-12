@@ -20,6 +20,8 @@ import Dashboard from './Dashboard copy';
 import MonthlyCalendar from './monthly.calender';
 
 import "./../assets/css/custom.css"
+import { hasData } from 'jquery';
+import { couldStartTrivia } from 'typescript';
 
 const remoteInfoStyle = {
     padding: '20px',
@@ -48,9 +50,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://192.168.1.243:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://localhost:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
-                console.log(data)
                 let employeeLogData = data.data.map((obj, i) => {
                     const getCommitedDays = (schedule) => {
                         return DAYS.filter(day => schedule?.[day] == '1');
@@ -65,7 +66,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                         attendance: {
                             present: obj.present,
                             absent: obj.absent,
-                            half: obj.half
+                            half: obj.half,
+                            count: obj.count
                         },
                         schedule: {
                             days: getCommitedDays(obj.schedule),
@@ -96,23 +98,28 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                     WFH.forEach(element => {
                         complience.count += element.complience?.count;
                         complience.present += element.complience?.present;
-                        attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
-                        attendance.present += element.attendance?.present + (element.attendance?.half / 2);
+                        // complience.absent += element.complience?.absent;
+                        attendance.count += element.attendance.count;
+                        // attendance.absent += element.attendance?.absent;
+                        attendance.present += element.attendance?.present;
+                        // attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
+                        // attendance.present += element.attendance?.present + (element.attendance?.half / 2);
                     });
                     complience.absent = complience.count - complience.present;
                     attendance.absent = attendance.count - attendance.present;
-                    console.log(complience, attendance)
+                    console.log("complience, attendance --- ", complience, attendance)
                     setComplienceData({
                         labels: [
-                            Math.round((complience.present / complience.count) * 100) + "%",
-                            Math.round((complience.absent / complience.count) * 100) + "%"
+                            Math.round(((complience.present + (complience.half / 2)) / complience.count) * 100) + "%",
+                            Math.round(((complience.absent + (complience.half / 2)) / complience.count) * 100) + "%"
                         ],
                         series: [
                             Math.round((complience.present / complience.count) * 100),
                             Math.round((complience.absent / complience.count) * 100)
                         ],
                         present: complience.present,
-                        absent: complience.absent
+                        absent: complience.absent,
+                        half: complience.half
                     })
                     setAttendanceData({
                         labels: [
@@ -124,7 +131,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             Math.round((attendance.absent / attendance.count) * 100)
                         ],
                         present: attendance.present,
-                        absent: attendance.absent
+                        absent: attendance.absent,
+                        half: attendance.half
                     })
                 }
                 else if (isRemote == false) {
@@ -158,39 +166,47 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                 let WFH = employeeLogData.filter(obj => !obj.isRemote);
                 if (WFH.length) {
                     setIsRemote(false)
-                    let complience = { count: 0, present: 0, absent: 0 };
-                    let attendance = { count: 0, present: 0, absent: 0 };
+                    let complience = { count: 0, present: 0, absent: 0, half: 0 };
+                    let attendance = { count: 0, present: 0, absent: 0, half: 0 };
                     WFH.forEach(element => {
                         complience.count += element.complience?.count;
                         complience.present += element.complience?.present;
-                        attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
-                        attendance.present += element.attendance?.present + (element.attendance?.half / 2);
+                        complience.half += element.complience?.half;
+                        attendance.present += element.attendance?.present;
+                        attendance.absent += element.attendance?.absent;
+                        attendance.count += element.attendance.count;
+
+
+                        // attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
+                        // attendance.present += element.attendance?.present + (element.attendance?.half / 2);
                     });
                     complience.absent = complience.count - complience.present;
                     attendance.absent = attendance.count - attendance.present;
-                    console.log(complience, attendance)
+                    console.log("complience, attendance", complience, attendance)
                     setComplienceData({
                         labels: [
-                            Math.round((complience.present / complience.count) * 100) + "%",
+                            Math.round((complience.present + (complience.half / 2) / complience.count) * 100) + "%",
                             Math.round((complience.absent / complience.count) * 100) + "%"
                         ],
                         series: [
-                            Math.round((complience.present / complience.count) * 100),
+                            Math.round((complience.present+ (complience.half / 2)  / complience.count) * 100),
                             Math.round((complience.absent / complience.count) * 100)
                         ],
                         present: complience.present,
+                        half: complience.half,
                         absent: complience.absent
                     })
                     setAttendanceData({
                         labels: [
-                            Math.round((attendance.present / attendance.count) * 100) + "%",
+                            Math.round((attendance.present + (attendance.half/2) / attendance.count) * 100) + "%",
                             Math.round((attendance.absent / attendance.count) * 100) + "%"
                         ],
                         series: [
-                            Math.round((attendance.present / attendance.count) * 100),
+                            Math.round((attendance.present + (attendance.half/2) / attendance.count) * 100),
                             Math.round((attendance.absent / attendance.count) * 100)
                         ],
                         present: attendance.present,
+                        half: attendance.half,
                         absent: attendance.absent
                     })
                 }
@@ -199,7 +215,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
 
     const complienceTemplate = (employee) => {
         console.log((employee?.complience?.present / employee.complience.count) * 100)
-        return <div>{employee?.complience?.count ? <ProgressBar value={Math.round((employee?.complience?.present / employee.complience.count) * 100)}></ProgressBar> : 'Remote'}</div>
+        return <div>{employee?.complience?.count ? <ProgressBar value={Math.round(((employee?.complience?.present + (employee?.complience?.half /2)) / employee.complience.count) * 100)}></ProgressBar> : 'Remote'}</div>
     };
 
     const attendanceTemplate = (employee) => {
@@ -270,7 +286,9 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 <hr></hr>
                             </Card.Header>
                             <Card.Body>
-                                <div
+                                <Row>
+                                    <Col>
+                                    <div
                                     className="ct-chart ct-perfect-fourth"
                                     id="chartPreferences"
                                 >
@@ -286,7 +304,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                         <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complienceData.present} days</Col>
                                         <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complienceData.absent} days</Col>
                                     </Row> : null}
-                                </div>
+                                </div></Col>
+                                </Row>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -360,9 +379,15 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </Row>
                                 <Row>
                                     <Col md={3}>Compliance</Col>
-                                    <Col md={3}>{employee.complience?.present} / {employee.complience?.count} days</Col>
+                                    <Col md={3}>{employee.complience?.present + (employee.complience?.half / 2)} / {employee.complience?.count} days</Col>
                                     <Col md={3}>Attendance</Col>
-                                    <Col md={3}>{employee.attendance?.present + (employee.attendance?.half) / 2} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
+                                    <Col md={3}>{employee.attendance?.present + (employee.attendance?.half / 2)} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
+                                </Row>
+                                <Row>
+                                    <Col md={3}>Percentage</Col>
+                                    <Col md={3}>{Math.round(((employee.complience?.present + (employee.complience?.half / 2)) / employee.complience?.count) * 100 )}% </Col>
+                                    <Col md={3}>Percentage</Col>
+                                    <Col md={3}>{Math.round(((employee.attendance?.present + (employee.attendance?.half / 2)) / employee.attendance?.count) * 100 )}%</Col>
                                 </Row>
 <br></br>                                <Row>
                                     {/* <Col>{JSON.stringify(getCalenderData(employee))}</Col> */}

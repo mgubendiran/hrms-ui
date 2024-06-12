@@ -26,6 +26,7 @@ import { Calendar } from 'primereact/calendar';
 
 import { ListBox } from 'primereact/listbox';
 import ProjectEmployeeTable from "./project.employee.table";
+import { Label } from "reactstrap";
 
 const monthList = [
   { key: 1, value: "1-January" },
@@ -51,11 +52,13 @@ function ProjectComponent() {
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [employees, setEmployees] = useState([])
   const [selectedEmployee, setSelectedEmployee] = useState(null)
+  const [clientProjects, setClientProjects] = useState([])
+  const [selectedClientProject, setSelectedClientProject] = useState(null)
   const [date, setDate] = useState(null)
 
 
   useEffect(() => {
-    axios.get('http://192.168.1.243:2000/client')
+    axios.get('http://localhost:2000/client')
       .then(response => {
         setProjects(response.data?.map(p => {
           return {
@@ -72,12 +75,18 @@ function ProjectComponent() {
   }, []);
 
   const getProjectEmployees = (obj) => {
-    axios.get(`http://192.168.1.243:2000/employee/client/${obj.client_name}`)
+    axios.get(`http://localhost:2000/employee/client/${obj.client_name}`)
       .then(response => {
         console.log(response.data)
         console.log(employees)
         let employeeData = (response.data?.employees || []).map(obj => {return {...obj, FullName: `${obj.FirstName} ${obj.LastName} - ${obj.Number}`}})
         setEmployees(employeeData)
+        setClientProjects((response.data?.project || [])?.map(p => {
+          return {
+            ...p,
+            name: `${p.project_code} - ${p.project_name}`
+          }
+        }))
       })
       .catch(error => {
         console.error(error);
@@ -95,7 +104,7 @@ function ProjectComponent() {
     }
   }
   const exportHandler = (searchKey) => {
-    axios.get(`http://192.168.1.243:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
+    axios.get(`http://localhost:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
       .then((data) => {
         // console.log(data)
         const url = window.URL.createObjectURL(new Blob([data.data]));
@@ -111,16 +120,15 @@ function ProjectComponent() {
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col lg="6" sm="6">
-            <Card style={{height: "320px"}} >
-              <Card.Header>
-                <Card.Title as="h4">Project-wise Report</Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Row><Col><h5>Project</h5></Col></Row>
+      <Row>
+        <Col md="12">
+          <Card>
+          <Card.Header>
+                <Card.Title as="h4">Client-Wise Report{selectedProject?.client_name ? ': '+selectedProject?.client_name : null}</Card.Title>
+          </Card.Header>
+          <Card.Body>
                 <Row>
-                  <Col><Dropdown placeholder="select project" style={{width: "100%"}}  listStyle={{ maxHeight: '160px' }} filter value={selectedProject} 
+                  <Col md="6"><Label><b>Client</b></Label><Dropdown placeholder="select client" style={{width: "100%"}}  listStyle={{ maxHeight: '160px' }} filter value={selectedProject} 
                   onChange={(e) => {
                     console.log(e.value)
                     if (e.value) {
@@ -129,78 +137,60 @@ function ProjectComponent() {
                     }
                   }} 
                   // onChange={(e) => dateHandler(e)}
-                  options={projects} optionLabel="name" className="w-full md:w-14rem" /></Col>
-                </Row>
-                <Row><Col><h5>Month</h5></Col></Row>
-                <Row>
-                  <Col>
+                  options={projects} optionLabel="name" className="w-full md:w-14rem" />
+                  </Col>
+                  <Col md="4"><Label><b>Month & Year</b></Label>
                   <Calendar placeholder="select month & year" style={{width: "100%"}} value={date} 
                    onChange={(e) => dateHandler(e)}
 
                   // onChange={(e) => {console.log(e.value); setSelectedYear(e.value.getFullYear()); setSelectedMonth(e.value.getMonth()+1)}} 
                   view="month" dateFormat="mm/yy" /></Col>
+                  <Col md="2"> <Button onClick={exportHandler} style={{ marginTop: "25px", height: "50px", width: "100%"}} >Export</Button></Col>
                 </Row>
-                {/* <Row><Col></Col></Row>
-                <Row>
-                  <Col>
-                    <Dropdown style={{width: "100%"}} filter listStyle={{ maxHeight: '160px' }} value={selectedYear} onChange={(e) => {
-                      if (e.value) {
-                        setSelectedYear(e?.value)
-                        // commonHandler(e)
-                      }
-                    }} options={years} optionLabel="value"  className="w-full md:w-14rem" />
-                  </Col>
-                </Row>
-                <Row><Col></Col></Row>
+          </Card.Body>
+            
+          </Card>
+        </Col>
+        </Row>
+        <Row>
+          <Col lg="6" sm="6">
+          <Card style={{height: "320px"}}>
+              <Card.Header>
+                <Card.Title as="h4">Projects</Card.Title>
+              </Card.Header>
+              <Card.Body>
+                <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedClientProject} onChange={(e) => {
+                  console.log(e.value)
+                  if (e.value) {
+                    setSelectedClientProject(e?.value)
+                  }
+                }} options={clientProjects} optionLabel="name" className="w-full md:w-14rem" />
 
-                <Row>
-                  <Col>
-                    <Dropdown style={{width: "100%"}} filter listStyle={{ maxHeight: '160px' }} value={selectedMonth} onChange={(e) => {
-                      if (e.value) {
-                        setSelectedMonth(e?.value.split('-')[0])
-                        // commonHandler(e)
-                      }
-                    }} options={months} optionLabel="value" className="w-full md:w-14rem" />
-                  </Col>
-                </Row> */}
-                
-                
               </Card.Body>
             </Card>
           </Col>
           <Col lg="6" sm="6">
-            <Card style={{height: "320px"}}>
+          <Card style={{height: "320px"}} >
               <Card.Header>
                 <Card.Title as="h4">Employees</Card.Title>
               </Card.Header>
               <Card.Body>
-                <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
+                <Row>
+                  <Col>
+                  <ListBox listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee} onChange={(e) => {
                   console.log(e.value)
                   if (e.value) {
                     setSelectedEmployee(e?.value)
                   }
                 }} options={employees} optionLabel="FullName" className="w-full md:w-14rem" />
-
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
+            
           </Col>
         </Row>
-        <Row>
-          <Col>
-          <Card style={{height: "80px"}}>
-                            <Card.Header>
-                                <Card.Title as="h4" className="">Project: {selectedProject?.client_name}</Card.Title>
-                                <Row>
-                                <Col md="10"><p className="card-category">{selectedProject?.projects?.map(p => p.project_name)?.join(' ,')}</p></Col>
-                                  {/* <Col md="10"><p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p></Col> */}
-                                  <Col md="2">{selectedProject && selectedYear && selectedMonth ? <Button onClick={exportHandler}>Export</Button>: null}</Col>
-                                </Row>
-                                 
-                                
-                            </Card.Header>
-                        </Card>
-          </Col>
-        </Row>
+        
         <Row>
           {selectedProject && selectedYear && selectedMonth ? <ProjectEmployeeTable projectId={selectedProject.name} month={selectedMonth} year={selectedYear} client={selectedProject}></ProjectEmployeeTable>: null}
         </Row>
