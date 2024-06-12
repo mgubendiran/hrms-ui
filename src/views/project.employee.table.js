@@ -50,7 +50,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://localhost:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://192.168.1.243:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
                 let employeeLogData = data.data.map((obj, i) => {
                     const getCommitedDays = (schedule) => {

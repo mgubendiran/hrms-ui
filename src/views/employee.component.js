@@ -57,7 +57,7 @@ function EmployeeComponent() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:2000/employee')
+    axios.get('http://192.168.1.243:2000/employee')
       .then(response => {
         let employeeData = (response.data || []).map(obj => { return { ...obj, FullName: `${obj.FirstName} ${obj.LastName} - ${obj.Number}` } })
         setEmployees(employeeData)
@@ -135,7 +135,7 @@ function EmployeeComponent() {
   }
 
   const getEmployeeDetails = (obj) => {
-    axios.get(`http://localhost:2000/employee/${obj.EmployeeId}/dashboard`)
+    axios.get(`http://192.168.1.243:2000/employee/${obj.EmployeeId}/dashboard`)
       .then(response => {
         setSelectedEmployee(response.data);
         updateData();

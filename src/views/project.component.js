@@ -58,7 +58,7 @@ function ProjectComponent() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:2000/client')
+    axios.get('http://192.168.1.243:2000/client')
       .then(response => {
         setProjects(response.data?.map(p => {
           return {
@@ -75,7 +75,7 @@ function ProjectComponent() {
   }, []);
 
   const getProjectEmployees = (obj) => {
-    axios.get(`http://localhost:2000/employee/client/${obj.client_name}`)
+    axios.get(`http://192.168.1.243:2000/employee/client/${obj.client_name}`)
       .then(response => {
         console.log(response.data)
         console.log(employees)
@@ -104,7 +104,7 @@ function ProjectComponent() {
     }
   }
   const exportHandler = (searchKey) => {
-    axios.get(`http://localhost:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
+    axios.get(`http://192.168.1.243:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
       .then((data) => {
         // console.log(data)
         const url = window.URL.createObjectURL(new Blob([data.data]));
