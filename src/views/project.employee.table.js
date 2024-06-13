@@ -358,7 +358,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                                     <Col> <div >Monthly Working days - {attendanceData.total} days</div></Col>
                                                 </Row>
                                         <Row >
-                                            <Col ><i className="fas fa-circle text-info"></i>Work-In Office - {attendanceData.present + (attendanceData?.half / 2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})` : null} days</Col>
+                                            <Col ><i className="fas fa-circle text-info"></i>Work-In Office - {attendanceData.present + (attendanceData?.half / 2)} days  {attendanceData.half ? `(Full:${attendanceData.present} - Half:${attendanceData.half})` : null}</Col>
                                         </Row>
                                         <Row>
                                             <Col ><i className="fas fa-circle text-danger"></i>Work-In Remote - {attendanceData.absent} days</Col>
