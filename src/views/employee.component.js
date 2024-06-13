@@ -137,7 +137,7 @@ function EmployeeComponent() {
   const getEmployeeDetails = (obj) => {
     axios.get(`http://192.168.1.243:2000/employee/${obj.EmployeeId}/dashboard`)
       .then(response => {
-        setSelectedEmployee(response.data);
+        setSelectedEmployee(obj);
         updateData();
       })
       .catch(error => {
@@ -174,8 +174,8 @@ function EmployeeComponent() {
                     onChange={(e) => {
                       console.log(e.value)
                       if (e.value) {
-                        setSelectedEmployee(e?.value)
                         getEmployeeDetails(e?.value)
+                        // setSelectedEmployee(e?.value)
                         if(date) {
                           updateData(date)
                         }

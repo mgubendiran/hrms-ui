@@ -43,7 +43,7 @@ function Sidebar({ color, image, routes }) {
           >
           </a>
           <a className="simple-text" href="https://www.sonata-software.com">
-            Sonata Encore Attendance
+            <img style={{width: "200px"}} src="https://upload.wikimedia.org/wikipedia/en/c/c8/Sonata_Software_Logo.png"/>
           </a>
         </div>
         <Nav>
