@@ -110,10 +110,10 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                     });
                     complience.absent = complience.count - (complience.present + (complience.half / 2));
                     attendance.absent = attendance.count - (attendance.present + (attendance.half / 2));
-                    console.log("complience, attendance --- ", complience, attendance)
+                    // console.log("complience, attendance --- ", complience, attendance)
                     let cp = complience.present + (complience.half / 2);
-                    let ap = attendance.present + (attendance.half/2);
-                    console.log("cp-ap:", cp, ap)
+                    let ap = attendance.present + (attendance.half / 2);
+                    // console.log("cp-ap:", cp, ap)
                     setComplienceData({
                         labels: [
                             Math.round((cp / complience.count) * 100) + "%",
@@ -125,7 +125,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                         ],
                         present: complience.present,
                         absent: complience.absent,
-                        half: complience.half
+                        half: complience.half,
+                        total: complience.count
                     })
                     setAttendanceData({
                         labels: [
@@ -138,8 +139,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                         ],
                         present: attendance.present,
                         absent: attendance.absent,
-                        half: attendance.half
-
+                        half: attendance.half,
+                        total: attendance.count
                     })
                 }
                 else if (isRemote == false) {
@@ -225,7 +226,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
 
     const complienceTemplate = (employee) => {
         console.log((employee?.complience?.present / employee.complience.count) * 100)
-        return <div>{employee?.complience?.count ? <ProgressBar value={Math.round(((employee?.complience?.present + (employee?.complience?.half /2)) / employee.complience.count) * 100)}></ProgressBar> : 'Remote'}</div>
+        return <div>{employee?.complience?.count ? <ProgressBar value={Math.round(((employee?.complience?.present + (employee?.complience?.half / 2)) / employee.complience.count) * 100)}></ProgressBar> : 'Remote'}</div>
     };
 
     const attendanceTemplate = (employee) => {
@@ -255,15 +256,15 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
         let firstDay = employee.firstDay || 0;
         let lastDay = employee.lastDay || 6;
         for (let i = 0; i < firstDay; i++) {
-            if(!logsByDate[DAYS[i]]) logsByDate[DAYS[i]] = []
+            if (!logsByDate[DAYS[i]]) logsByDate[DAYS[i]] = []
             logsByDate[DAYS[i]].unshift({ day: DAYS[i], status: '', date: '' })
         }
         for (let i = 6; i > lastDay; i--) {
-            if(!logsByDate[DAYS[i]]) logsByDate[DAYS[i]] = []
+            if (!logsByDate[DAYS[i]]) logsByDate[DAYS[i]] = []
             logsByDate[DAYS[i]].push({ day: DAYS[i], status: '', date: '' })
         }
         let arr = logsByDate['Sunday'] || []
-    
+
         return (<>
             <Row>{
                 DAYS.forEach(ele => {
@@ -282,7 +283,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
         </>);
     }
     let dm = new Date();
-    dm.setMonth(month-1);
+    dm.setMonth(month - 1);
 
     return (
 
@@ -298,23 +299,29 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             <Card.Body>
                                 <Row>
                                     <Col>
-                                    <div
-                                    className="ct-chart ct-perfect-fourth"
-                                    id="chartPreferences"
-                                >
-                                    {
-                                        isRemote ? <div style={remoteInfoStyle}>Working as Remote</div> : <ChartistGraph
-                                            data={complienceData}
-                                            type="Pie"
-                                        />
-                                    }
-                                </div>
-                                <div className="legend">
-                                    {!isRemote ? <Row >
-                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complienceData.present + (complienceData?.half/2)} {complienceData.half ? `(F:${complienceData.present} - H:${complienceData.half})`: null} days</Col>
-                                        <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complienceData.absent} days</Col>
-                                    </Row> : null}
-                                </div></Col>
+                                        <div
+                                            className="ct-chart ct-perfect-fourth"
+                                            id="chartPreferences"
+                                        >
+                                            {
+                                                isRemote ? <div style={remoteInfoStyle}>Working as Remote</div> : <ChartistGraph
+                                                    data={complienceData}
+                                                    type="Pie"
+                                                />
+                                            }
+                                        </div>
+                                        <div className="legend">
+                                            {!isRemote ? <>
+                                                <Row >
+                                                    <Col md="12"><i className="fas fa-circle text-info"></i>Present - {complienceData.present + (complienceData?.half / 2)} {complienceData.half ? `(F:${complienceData.present} - H:${complienceData.half})` : null} days</Col>
+                                                </Row>
+                                                <Row><Col md="12"><i className="fas fa-circle text-danger"></i>Absent - {complienceData.absent} days</Col>
+
+                                                </Row>
+                                                <Row>
+                                                    <Col> <div >Total - {complienceData.total}</div></Col>
+                                                </Row></> : null}
+                                        </div></Col>
                                 </Row>
                             </Card.Body>
                         </Card>
@@ -337,10 +344,16 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     }
                                 </div>
                                 <div className="legend">
-                                    {!isRemote ? <Row >
-                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData.present + (attendanceData?.half/2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})`: null} days</Col>
-                                        <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {attendanceData.absent} days</Col>
-                                    </Row> : null}
+                                    {!isRemote ? <>
+                                        <Row >
+                                            <Col ><i className="fas fa-circle text-info"></i>Present - {attendanceData.present + (attendanceData?.half / 2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})` : null} days</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col ><i className="fas fa-circle text-danger"></i>Absent - {attendanceData.absent} days</Col>
+                                        </Row>
+                                        <Row>
+                                                    <Col> <div >Total - {attendanceData.total}</div></Col>
+                                                </Row></> : null}
                                 </div>
                             </Card.Body>
                         </Card>
@@ -382,8 +395,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </Row>
                                 <Row>
                                     <Col md={3}>Month</Col>
-                                    <Col md={3}>{ 
-                                    new Date(year, month-1).toLocaleString('default', { month: 'long' })}</Col>
+                                    <Col md={3}>{
+                                        new Date(year, month - 1).toLocaleString('default', { month: 'long' })}</Col>
                                     <Col md={3}>Year</Col>
                                     <Col md={3}>{year}</Col>
                                 </Row>
@@ -395,11 +408,11 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </Row>
                                 <Row>
                                     <Col md={3}>Percentage</Col>
-                                    <Col md={3}>{Math.round(((employee.complience?.present + (employee.complience?.half / 2)) / employee.complience?.count) * 100 )}% </Col>
+                                    <Col md={3}>{Math.round(((employee.complience?.present + (employee.complience?.half / 2)) / employee.complience?.count) * 100)}% </Col>
                                     <Col md={3}>Percentage</Col>
-                                    <Col md={3}>{Math.round(((employee.attendance?.present + (employee.attendance?.half / 2)) / employee.attendance?.count) * 100 )}%</Col>
+                                    <Col md={3}>{Math.round(((employee.attendance?.present + (employee.attendance?.half / 2)) / employee.attendance?.count) * 100)}%</Col>
                                 </Row>
-<br></br>                                <Row>
+                                <br></br>                                <Row>
                                     {/* <Col>{JSON.stringify(getCalenderData(employee))}</Col> */}
                                     {/* {
                                         getCalenderData()

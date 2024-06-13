@@ -110,7 +110,7 @@ function ProjectComponent() {
         const url = window.URL.createObjectURL(new Blob([data.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${Date.now()}.xlsx`);
+        link.setAttribute('download', `Report_${selectedProject?.client_name}_${selectedYear}_${selectedMonth}.xlsx`);
         document.body.appendChild(link);
         link.click();
       });
