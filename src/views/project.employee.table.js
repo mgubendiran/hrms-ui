@@ -50,7 +50,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://192.168.1.243:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
+        axios.get(`http://192.168.1.143:2000/attendance_log/client/${projectId}/year/${year}/month/${month}`)
             .then((data) => {
                 let employeeLogData = data.data.map((obj, i) => {
                     const getCommitedDays = (schedule) => {
@@ -150,7 +150,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
     }, [projectId, year, month]);
 
     // const getAttendanceLogByProject = (projectId, year, month) => {
-    //     axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
+    //     axios.get(`http://192.168.1.143:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
     //         .then((data) => {
     //             console.log(data)
     //             let employeeLogData = data.data.map((obj, i) => {
@@ -298,8 +298,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             </Card.Header>
                             <Card.Body>
                                 <Row>
-                                    <Col>Compliance Achieved : {complienceData?.labels?.[0]}</Col>
-                                    <Col>Compliance Not Achieved : {complienceData?.labels?.[1]}</Col>
+                                    <Col>Compliance Achieved: {complienceData?.labels?.[0]}</Col>
+                                    <Col>Not Achieved: {complienceData?.labels?.[1]}</Col>
                                 </Row>
                                 <Row>
                                     <Col>
