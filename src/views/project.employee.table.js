@@ -93,28 +93,34 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
 
                 if (WFH.length) {
                     setIsRemote(false)
-                    let complience = { count: 0, present: 0, absent: 0 };
-                    let attendance = { count: 0, present: 0, absent: 0 };
+                    let complience = { count: 0, present: 0, absent: 0, half: 0 };
+                    let attendance = { count: 0, present: 0, absent: 0, half: 0 };
                     WFH.forEach(element => {
                         complience.count += element.complience?.count;
                         complience.present += element.complience?.present;
+                        complience.half += element.complience?.half;
                         // complience.absent += element.complience?.absent;
                         attendance.count += element.attendance.count;
                         // attendance.absent += element.attendance?.absent;
                         attendance.present += element.attendance?.present;
+                        attendance.half += element.attendance?.half;
+
                         // attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
                         // attendance.present += element.attendance?.present + (element.attendance?.half / 2);
                     });
-                    complience.absent = complience.count - complience.present;
-                    attendance.absent = attendance.count - attendance.present;
+                    complience.absent = complience.count - (complience.present + (complience.half / 2));
+                    attendance.absent = attendance.count - (attendance.present + (attendance.half / 2));
                     console.log("complience, attendance --- ", complience, attendance)
+                    let cp = complience.present + (complience.half / 2);
+                    let ap = attendance.present + (attendance.half/2);
+                    console.log("cp-ap:", cp, ap)
                     setComplienceData({
                         labels: [
-                            Math.round(((complience.present + (complience.half / 2)) / complience.count) * 100) + "%",
-                            Math.round(((complience.absent + (complience.half / 2)) / complience.count) * 100) + "%"
+                            Math.round((cp / complience.count) * 100) + "%",
+                            Math.round((complience.absent / complience.count) * 100) + "%"
                         ],
                         series: [
-                            Math.round((complience.present / complience.count) * 100),
+                            Math.round((cp / complience.count) * 100),
                             Math.round((complience.absent / complience.count) * 100)
                         ],
                         present: complience.present,
@@ -123,16 +129,17 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                     })
                     setAttendanceData({
                         labels: [
-                            Math.round((attendance.present / attendance.count) * 100) + "%",
+                            Math.round((ap / attendance.count) * 100) + "%",
                             Math.round((attendance.absent / attendance.count) * 100) + "%"
                         ],
                         series: [
-                            Math.round((attendance.present / attendance.count) * 100),
+                            Math.round((ap / attendance.count) * 100),
                             Math.round((attendance.absent / attendance.count) * 100)
                         ],
                         present: attendance.present,
                         absent: attendance.absent,
                         half: attendance.half
+
                     })
                 }
                 else if (isRemote == false) {
@@ -141,77 +148,80 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
             });
     }, [projectId, year, month]);
 
-    const getAttendanceLogByProject = (projectId, year, month) => {
-        axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
-            .then((data) => {
-                console.log(data)
-                let employeeLogData = data.data.map((obj, i) => {
-                    return {
-                        sno: i + 1,
-                        name: `${obj.FirstName} ${obj.LastName}`,
-                        number: obj.Number,
-                        location: obj.WorkLocation,
-                        manager: obj.ManagerId,
-                        complience: obj.complience,
-                        attendance: {
-                            present: obj.present,
-                            absent: obj.absent,
-                            half: obj.half
-                        },
-                        isRemote: obj.complience?.count == 0
+    // const getAttendanceLogByProject = (projectId, year, month) => {
+    //     axios.get(`http://192.168.1.243:2000/attendance_log/project/${projectId}/year/${year}/month/${month}`)
+    //         .then((data) => {
+    //             console.log(data)
+    //             let employeeLogData = data.data.map((obj, i) => {
+    //                 return {
+    //                     sno: i + 1,
+    //                     name: `${obj.FirstName} ${obj.LastName}`,
+    //                     number: obj.Number,
+    //                     location: obj.WorkLocation,
+    //                     manager: obj.ManagerId,
+    //                     complience: obj.complience,
+    //                     attendance: {
+    //                         present: obj.present,
+    //                         absent: obj.absent,
+    //                         half: obj.half
+    //                     },
+    //                     isRemote: obj.complience?.count == 0
 
-                    }
-                })
-                setEmployees(employeeLogData)
-                let WFH = employeeLogData.filter(obj => !obj.isRemote);
-                if (WFH.length) {
-                    setIsRemote(false)
-                    let complience = { count: 0, present: 0, absent: 0, half: 0 };
-                    let attendance = { count: 0, present: 0, absent: 0, half: 0 };
-                    WFH.forEach(element => {
-                        complience.count += element.complience?.count;
-                        complience.present += element.complience?.present;
-                        complience.half += element.complience?.half;
-                        attendance.present += element.attendance?.present;
-                        attendance.absent += element.attendance?.absent;
-                        attendance.count += element.attendance.count;
+    //                 }
+    //             })
+    //             setEmployees(employeeLogData)
+    //             let WFH = employeeLogData.filter(obj => !obj.isRemote);
+    //             if (WFH.length) {
+    //                 setIsRemote(false)
+    //                 let complience = { count: 0, present: 0, absent: 0, half: 0 };
+    //                 let attendance = { count: 0, present: 0, absent: 0, half: 0 };
+    //                 WFH.forEach(element => {
+    //                     complience.count += element.complience?.count;
+    //                     complience.present += element.complience?.present;
+    //                     complience.half += element.complience?.half;
+    //                     attendance.present += element.attendance?.present;
+    //                     attendance.absent += element.attendance?.absent;
+    //                     attendance.count += element.attendance.count;
+    //                     attendance.half += element.attendance?.half
 
 
-                        // attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
-                        // attendance.present += element.attendance?.present + (element.attendance?.half / 2);
-                    });
-                    complience.absent = complience.count - complience.present;
-                    attendance.absent = attendance.count - attendance.present;
-                    console.log("complience, attendance", complience, attendance)
-                    setComplienceData({
-                        labels: [
-                            Math.round((complience.present + (complience.half / 2) / complience.count) * 100) + "%",
-                            Math.round((complience.absent / complience.count) * 100) + "%"
-                        ],
-                        series: [
-                            Math.round((complience.present+ (complience.half / 2)  / complience.count) * 100),
-                            Math.round((complience.absent / complience.count) * 100)
-                        ],
-                        present: complience.present,
-                        half: complience.half,
-                        absent: complience.absent
-                    })
-                    setAttendanceData({
-                        labels: [
-                            Math.round((attendance.present + (attendance.half/2) / attendance.count) * 100) + "%",
-                            Math.round((attendance.absent / attendance.count) * 100) + "%"
-                        ],
-                        series: [
-                            Math.round((attendance.present + (attendance.half/2) / attendance.count) * 100),
-                            Math.round((attendance.absent / attendance.count) * 100)
-                        ],
-                        present: attendance.present,
-                        half: attendance.half,
-                        absent: attendance.absent
-                    })
-                }
-            });
-    }
+    //                     // attendance.count += element.attendance?.absent + element.attendance?.present + element.attendance?.half;
+    //                     // attendance.present += element.attendance?.present + (element.attendance?.half / 2);
+    //                 });
+    //                 complience.absent = complience.count - complience.present;
+    //                 attendance.absent = attendance.count - attendance.present;
+    //                 console.log("complience, attendance", complience, attendance);
+    //                 let cp = complience.present + (complience.half / 2);
+    //                 let ap = attendance.present + (attendance.half/2)
+    //                 setComplienceData({
+    //                     labels: [
+    //                         Math.round((cp / complience.count) * 100) + "%",
+    //                         Math.round((complience.absent / complience.count) * 100) + "%"
+    //                     ],
+    //                     series: [
+    //                         Math.round((cp  / complience.count) * 100),
+    //                         Math.round((complience.absent / complience.count) * 100)
+    //                     ],
+    //                     present: complience.present,
+    //                     half: complience.half,
+    //                     absent: complience.absent
+    //                 })
+    //                 setAttendanceData({
+    //                     labels: [
+    //                         Math.round((ap / attendance.count) * 100) + "%",
+    //                         Math.round((attendance.absent / attendance.count) * 100) + "%"
+    //                     ],
+    //                     series: [
+    //                         Math.round((ap / attendance.count) * 100),
+    //                         Math.round((attendance.absent / attendance.count) * 100)
+    //                     ],
+    //                     present: attendance.present,
+    //                     half: attendance.half,
+    //                     absent: attendance.absent
+    //                 })
+    //             }
+    //         });
+    // }
 
     const complienceTemplate = (employee) => {
         console.log((employee?.complience?.present / employee.complience.count) * 100)
@@ -301,7 +311,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </div>
                                 <div className="legend">
                                     {!isRemote ? <Row >
-                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complienceData.present} days</Col>
+                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {complienceData.present + (complienceData?.half/2)} {complienceData.half ? `(F:${complienceData.present} - H:${complienceData.half})`: null} days</Col>
                                         <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {complienceData.absent} days</Col>
                                     </Row> : null}
                                 </div></Col>
@@ -328,7 +338,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </div>
                                 <div className="legend">
                                     {!isRemote ? <Row >
-                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData.present} days</Col>
+                                        <Col md="6"><i className="fas fa-circle text-info"></i>Present - {attendanceData.present + (attendanceData?.half/2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})`: null} days</Col>
                                         <Col md="6"><i className="fas fa-circle text-danger"></i>Absent - {attendanceData.absent} days</Col>
                                     </Row> : null}
                                 </div>
