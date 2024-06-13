@@ -59,7 +59,7 @@ function MonthlyCalendar(props) {
                 <Card.Body>
                     <Row style={{ fontSize: "14px", border: "2px solid gray", color: "blue" }}>{
                         DAYS.map(ele => {
-                            return <Col style={{ border: "1px solid gray" }}>{ele.slice(0, 3)}</Col>
+                            return <Col style={{ border: "1px solid gray", backgroundColor: (data?.schedule?.days || [])?.indexOf(ele) > -1 ? "yellow": "none" }}>{ele.slice(0, 3)}</Col>
                         })
                     }</Row>
                     {

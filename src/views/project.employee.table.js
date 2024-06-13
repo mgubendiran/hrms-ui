@@ -73,7 +73,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             days: getCommitedDays(obj.schedule),
                             ...(obj?.schedule)
                         },
-                        isRemote: obj.complience?.count == 0,
+                        isRemote: !getCommitedDays(obj.schedule)?.length,
                         logs: obj.logs?.map(log => {
                             return {
                                 date: new Date(log.AttendanceDate).getDate(),
@@ -298,6 +298,10 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             </Card.Header>
                             <Card.Body>
                                 <Row>
+                                    <Col>Compliance Achieved : {complienceData?.labels?.[0]}</Col>
+                                    <Col>Compliance Not Achieved : {complienceData?.labels?.[1]}</Col>
+                                </Row>
+                                <Row>
                                     <Col>
                                         <div
                                             className="ct-chart ct-perfect-fourth"
@@ -312,15 +316,16 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                         </div>
                                         <div className="legend">
                                             {!isRemote ? <>
-                                                <Row >
-                                                    <Col md="12"><i className="fas fa-circle text-info"></i>Present - {complienceData.present + (complienceData?.half / 2)} {complienceData.half ? `(F:${complienceData.present} - H:${complienceData.half})` : null} days</Col>
+                                                <Row>
+                                                    <Col> <div >Expected In-Office Days - {complienceData.total} days</div></Col>
                                                 </Row>
-                                                <Row><Col md="12"><i className="fas fa-circle text-danger"></i>Absent - {complienceData.absent} days</Col>
+                                                <Row >
+                                                    <Col md="12"><i className="fas fa-circle text-info"></i>Compliance Achieved - {complienceData.present + (complienceData?.half / 2)} days {complienceData.half ? `(Full:${complienceData.present} - Half:${complienceData.half})` : null}</Col>
+                                                </Row>
+                                                <Row><Col md="12"><i className="fas fa-circle text-danger"></i>Compliance Not Achieved - {complienceData.absent} days</Col>
 
                                                 </Row>
-                                                <Row>
-                                                    <Col> <div >Total - {complienceData.total}</div></Col>
-                                                </Row></> : null}
+                                               </> : null}
                                         </div></Col>
                                 </Row>
                             </Card.Body>
@@ -333,6 +338,10 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 <hr></hr>
                             </Card.Header>
                             <Card.Body>
+                            <Row>
+                                    <Col>Work-In Office: {attendanceData?.labels?.[0]}</Col>
+                                    <Col>Work-In Remote: {attendanceData?.labels?.[1]}</Col>
+                                </Row>
                                 <div
                                     className="ct-chart ct-perfect-fourth"
                                     id="chartPreferences"
@@ -345,15 +354,15 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                 </div>
                                 <div className="legend">
                                     {!isRemote ? <>
+                                        <Row>
+                                                    <Col> <div >Monthly Working days - {attendanceData.total} days</div></Col>
+                                                </Row>
                                         <Row >
-                                            <Col ><i className="fas fa-circle text-info"></i>Present - {attendanceData.present + (attendanceData?.half / 2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})` : null} days</Col>
+                                            <Col ><i className="fas fa-circle text-info"></i>Work-In Office - {attendanceData.present + (attendanceData?.half / 2)} {attendanceData.half ? `(F:${attendanceData.present} - H:${attendanceData.half})` : null} days</Col>
                                         </Row>
                                         <Row>
-                                            <Col ><i className="fas fa-circle text-danger"></i>Absent - {attendanceData.absent} days</Col>
-                                        </Row>
-                                        <Row>
-                                                    <Col> <div >Total - {attendanceData.total}</div></Col>
-                                                </Row></> : null}
+                                            <Col ><i className="fas fa-circle text-danger"></i>Work-In Remote - {attendanceData.absent} days</Col>
+                                        </Row></> : null}
                                 </div>
                             </Card.Body>
                         </Card>
@@ -400,7 +409,10 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Col md={3}>Year</Col>
                                     <Col md={3}>{year}</Col>
                                 </Row>
-                                <Row>
+                                {employee?.isRemote ? <Row>
+                                    <Col md={3}>Working as</Col>
+                                    <Col md={3}>Remote</Col>
+                                </Row>: <><Row>
                                     <Col md={3}>Compliance</Col>
                                     <Col md={3}>{employee.complience?.present + (employee.complience?.half / 2)} / {employee.complience?.count} days</Col>
                                     <Col md={3}>Attendance</Col>
@@ -411,7 +423,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Col md={3}>{Math.round(((employee.complience?.present + (employee.complience?.half / 2)) / employee.complience?.count) * 100)}% </Col>
                                     <Col md={3}>Percentage</Col>
                                     <Col md={3}>{Math.round(((employee.attendance?.present + (employee.attendance?.half / 2)) / employee.attendance?.count) * 100)}%</Col>
-                                </Row>
+                                </Row></>}
+                                
                                 <br></br>                                <Row>
                                     {/* <Col>{JSON.stringify(getCalenderData(employee))}</Col> */}
                                     {/* {

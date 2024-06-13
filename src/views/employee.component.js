@@ -137,7 +137,7 @@ function EmployeeComponent() {
   const getEmployeeDetails = (obj) => {
     axios.get(`http://192.168.1.243:2000/employee/${obj.EmployeeId}/dashboard`)
       .then(response => {
-        setSelectedEmployee(obj);
+        setSelectedEmployee(response.data);
         updateData();
       })
       .catch(error => {
