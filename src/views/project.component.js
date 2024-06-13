@@ -104,7 +104,7 @@ function ProjectComponent() {
     }
   }
   const exportHandler = (searchKey) => {
-    axios.get(`http://192.168.1.243:2000/attendance_log/project/${selectedProject?.project_id}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
+    axios.get(`http://192.168.1.243:2000/attendance_log/client/${selectedProject?.client_name}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
       .then((data) => {
         // console.log(data)
         const url = window.URL.createObjectURL(new Blob([data.data]));
@@ -145,7 +145,7 @@ function ProjectComponent() {
 
                   // onChange={(e) => {console.log(e.value); setSelectedYear(e.value.getFullYear()); setSelectedMonth(e.value.getMonth()+1)}} 
                   view="month" dateFormat="mm/yy" /></Col>
-                  <Col md="2"> <Button onClick={exportHandler} style={{ marginTop: "25px", height: "50px", width: "100%"}} >Export</Button></Col>
+                  <Col md="2"> {selectedProject && selectedMonth && selectedYear ? <Button onClick={exportHandler} style={{ marginTop: "25px", height: "50px", width: "100%"}} >Export</Button>: null }</Col>
                 </Row>
           </Card.Body>
             
@@ -192,7 +192,7 @@ function ProjectComponent() {
         </Row>
         
         <Row>
-          {selectedProject && selectedYear && selectedMonth ? <ProjectEmployeeTable projectId={selectedProject.name} month={selectedMonth} year={selectedYear} client={selectedProject}></ProjectEmployeeTable>: null}
+          {selectedProject && selectedYear && selectedMonth && employees?.length ? <ProjectEmployeeTable projectId={selectedProject.name} month={selectedMonth} year={selectedYear} client={selectedProject}></ProjectEmployeeTable>: null}
         </Row>
       </Container>
     </>
