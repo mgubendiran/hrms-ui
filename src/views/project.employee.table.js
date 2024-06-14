@@ -340,7 +340,7 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                             <Card.Body>
                             <Row>
                                     <Col>Work-In Office: {attendanceData?.labels?.[0]}</Col>
-                                    <Col>Work-In Remote: {attendanceData?.labels?.[1]}</Col>
+                                    <Col>Not Work-In Office: {attendanceData?.labels?.[1]}</Col>
                                 </Row>
                                 <div
                                     className="ct-chart ct-perfect-fourth"
