@@ -104,7 +104,7 @@ function ProjectComponent() {
     }
   }
   const exportHandler = (searchKey) => {
-    axios.get(`http://localhost:2000/attendance_log/client/${selectedProject?.client_name}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
+    axios.get(`http://192.168.1.143:2000/attendance_log/client/${selectedProject?.client_name}/year/${selectedYear}/month/${selectedMonth}/export`, { responseType: 'blob' })
       .then((data) => {
         // console.log(data)
         const url = window.URL.createObjectURL(new Blob([data.data]));
