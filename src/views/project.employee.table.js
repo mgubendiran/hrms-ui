@@ -235,7 +235,8 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
         let present = employee.attendance?.present + (employee.attendance?.half / 2)
         console.log(count, present)
         return <div>{employee?.complience?.count ? <ProgressBar value={Math.round((present / count) * 100)}></ProgressBar> : 'Remote'}</div>
-    };
+        // return <Row><Col md="9">{employee?.complience?.count ? <ProgressBar value={Math.round((present / count) * 100)}></ProgressBar> : 'Remote'}</Col> <Col md="3">{Math.round((present / count) * 100) + "%"}</Col></Row>
+    }
 
     const employeeLogTemplate = (empObj) => {
         return (<>
@@ -414,9 +415,9 @@ export default function ProjectEmployeeTable({ projectId, year, month }) {
                                     <Col md={3}>Remote</Col>
                                 </Row>: <><Row>
                                     <Col md={3}>Compliance</Col>
-                                    <Col md={3}>{employee.complience?.present + (employee.complience?.half / 2)} / {employee.complience?.count} days</Col>
+                                    <Col md={3}>{employee.complience?.half ? ` (F:${employee.complience?.present}-H:${employee.complience?.half})`: null} {employee.complience?.present + (employee.complience?.half / 2)} / {employee.complience?.count} days</Col>
                                     <Col md={3}>Attendance</Col>
-                                    <Col md={3}>{employee.attendance?.present + (employee.attendance?.half / 2)} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
+                                    <Col md={3}>{employee.attendance?.half ? ` (F:${employee.attendance?.present}-H:${employee.attendance?.half})`: null} {employee.attendance?.present + (employee.attendance?.half / 2)} / {employee.attendance?.present + employee.attendance?.absent + employee.attendance?.half} days</Col>
                                 </Row>
                                 <Row>
                                     <Col md={3}>Percentage</Col>
