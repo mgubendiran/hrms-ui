@@ -48,6 +48,7 @@ function EmployeeComponent() {
   const [months, setMonths] = useState(monthList)
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [selectedEmployee, setSelectedEmployee] = useState(null)
+  const [employee, setEmployee] = useState(null)
   const [date, setDate] = useState(null)
   const [attendanceData, setAttendanceData] = useState(null)
   const [complianceData, setComplianceData] = useState(null)
@@ -74,17 +75,19 @@ function EmployeeComponent() {
 
   // valueTemplate={employeeNameTemplate} itemTemplate={employeeNameTemplate}
   const updateData = (selectedDate) => {
-    let logs = selectedEmployee?.attendance_logs || []
+    let logs = employee?.attendance_logs || []
+    let commitedDays = getCommitedDays(employee?.schedule);
+    console.log(commitedDays)
+    if (commitedDays.length > 0) setIsRemote(false)
+    if(!date) return;
     let currentMonthLog = logs.filter(log => {
       let d = new Date(log.AttendanceDate)
       // console.log(d?.getMonth(), date?.getMonth(), d?.getFullYear(), date?.getFullYear())
-      return selectedDate && d.getMonth() == selectedDate.getMonth() && d.getFullYear() == selectedDate.getFullYear()
+      return date && d.getMonth() == date.getMonth() && d.getFullYear() == date.getFullYear()
     })
     setLogs(currentMonthLog)
 
-    let commitedDays = getCommitedDays(selectedEmployee?.schedule);
-    console.log(commitedDays)
-    if (commitedDays.length > 0) setIsRemote(false)
+    
     let present = currentMonthLog.filter((obj) => obj.StatusCode == "P");
     let half = currentMonthLog.filter((obj) => obj.StatusCode == "½P");
     let absent = currentMonthLog.filter((obj) => obj.StatusCode == "A")
@@ -137,7 +140,7 @@ function EmployeeComponent() {
   const getEmployeeDetails = (obj) => {
     axios.get(`http://192.168.1.143:2000/employee/${obj.EmployeeId}/dashboard`)
       .then(response => {
-        setSelectedEmployee(response.data);
+        setEmployee(response.data);
         updateData();
       })
       .catch(error => {
@@ -170,40 +173,40 @@ function EmployeeComponent() {
               <Card.Body>
                 <Row>
                   {/* <Col md="1">Employee</Col> */}
-                  <Col md="8"><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
+                  <Col md="12"><Dropdown placeholder="select employee" style={{ width: "100%" }} listStyle={{ maxHeight: '160px' }} filter value={selectedEmployee}
                     onChange={(e) => {
                       console.log(e.value)
                       if (e.value) {
                         getEmployeeDetails(e?.value)
-                        // setSelectedEmployee(e?.value)
-                        if(date) {
-                          updateData(date)
-                        }
+                        setSelectedEmployee(e?.value)
+                        // if(date) {
+                        //   updateData(date)
+                        // }
                       }
                     }}
                     options={employees}
                     optionLabel="FullName"
                     className="w-full md:w-14rem" /></Col>
                   {/* <Col md = "1">Month</Col> */}
-                  <Col md = "4"><Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
+                  {/* <Col md = "4"><Calendar placeholder="select month & year" style={{ width: "100%" }} value={date}
                     onChange={(e) => dateHandler(e)}
-                    view="month" dateFormat="mm/yy" /></Col>
+                    view="month" dateFormat="mm/yy" /></Col> */}
                 </Row>
               </Card.Body>
             </Card>
           </Col>
         </Row>
-          {selectedEmployee ? <Row>
+          {employee ? <Row>
             <Col>
               <Card >
                 <Card.Header>
-                  <Card.Title as="h4" className="">Employee: {selectedEmployee?.FirstName} {selectedEmployee?.LastName}</Card.Title>
+                  <Card.Title as="h4" className="">Employee: {employee?.FirstName} {employee?.LastName}</Card.Title>
                   <hr>
                   </hr>
                   {/* <p className="card-category">{selectedProject?.project_code},  {selectedProject?.client_name}</p> */}
                   <Row>
 
-                    <Col md="4">
+                    <Col md="5">
                       <Card style={{ minHeight: "200px" }}>
                         <Card.Header>
                           <Card.Title as="h4">Employee Details</Card.Title>
@@ -211,15 +214,15 @@ function EmployeeComponent() {
                         <Card.Body>
                           <Row>
                             <Col md="4">EmpID</Col>
-                            <Col>{selectedEmployee?.Number}</Col>
+                            <Col>{employee?.Number}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Location</Col>
-                            <Col>{selectedEmployee?.WorkLocation}</Col>
+                            <Col>{employee?.WorkLocation}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Scheduled Days</Col>
-                            <Col>{selectedEmployee?.schedule ? getCommitedDays(selectedEmployee?.schedule).join(', ') : '-'}</Col>
+                            <Col>{employee?.schedule ? getCommitedDays(employee?.schedule).join(', ') : '-'}</Col>
                           </Row>
                         </Card.Body>
                       </Card>
@@ -232,20 +235,20 @@ function EmployeeComponent() {
                         <Card.Body>
                           <Row>
                             <Col md="4">EmpID</Col>
-                            <Col>{selectedEmployee?.manager?.Number || '-'}</Col>
+                            <Col>{employee?.manager?.Number || '-'}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Name</Col>
-                            <Col>{selectedEmployee?.manager?.FirstName || ''} {selectedEmployee?.manager?.LastName || "-"}</Col>
+                            <Col>{employee?.manager?.FirstName || ''} {employee?.manager?.LastName || "-"}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Location</Col>
-                            <Col>{selectedEmployee?.manager?.WorkLocation || '-'}</Col>
+                            <Col>{employee?.manager?.WorkLocation || '-'}</Col>
                           </Row>
                         </Card.Body>
                       </Card>
                     </Col>
-                    <Col md="4">
+                    <Col md="3">
                       <Card style={{ minHeight: "200px" }}>
                         <Card.Header>
                           <Card.Title as="h4">Project Details</Card.Title>
@@ -253,15 +256,15 @@ function EmployeeComponent() {
                         <Card.Body>
                           <Row>
                             <Col md="4">Code</Col>
-                            <Col>{selectedEmployee?.project?.project_code || '-'}</Col>
+                            <Col>{employee?.project?.project_code || '-'}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Name</Col>
-                            <Col>{selectedEmployee?.project?.project_name || '-'}</Col>
+                            <Col>{employee?.project?.project_name || '-'}</Col>
                           </Row>
                           <Row>
                             <Col md="4">Client</Col>
-                            <Col>{selectedEmployee?.project?.client_name || '-'}</Col>
+                            <Col>{employee?.project?.client_name || '-'}</Col>
                           </Row>
                         </Card.Body>
                       </Card>
@@ -271,7 +274,7 @@ function EmployeeComponent() {
               </Card>
             </Col>
           </Row> : null}
-          {selectedEmployee && date ? 
+          {/* {selectedEmployee && date ? 
           <Row>
             <Col lg="12" sm="12">
             <Card >
@@ -326,7 +329,7 @@ function EmployeeComponent() {
               </Card.Body>
             </Card>
           </Col>
-          </Row> : null}
+          </Row> : null} */}
       </Container>
     </>
   );
